@@ -7,6 +7,9 @@ import nl.rabobank.banking_application.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +17,11 @@ import java.util.Optional;
 public class TransactionServiceImpl implements TransactionService{
     @Autowired
     TransactionRepository transactionRepository;
+
+/*
+    static final String QUERY_VALUES =
+            "SELECT Transaction.transactionID, Transaction.amount, Transaction.targetAccount, Transaction.sendingAccount, Transaction.date, Transaction.description, Transaction.currency, Category.type FROM Category, Transaction WHERE Category.id = Transaction.category";
+*/
 
     public MessageResponse createTransaction(Transaction transaction) {
         Transaction newTransaction = new Transaction();
@@ -32,7 +40,12 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     public List<Transaction> getAllTransaction() {
-        return transactionRepository.findAll();
+        List<Transaction> transactionListResult = transactionRepository.getAllTransactionWithCategory();
+        return transactionListResult;
+        /*System.out.println(transactionRepository);
+        return transactionRepository.findAll();*/
+        /*Query q = entityManager.createNativeQuery(QUERY_VALUES, String.class);
+        return q.getResultList();*/
     }
 
     public Optional<Transaction> updateTransaction(Long transactionID, Transaction transaction)  throws ResourceNotFoundException{
@@ -63,4 +76,6 @@ public class TransactionServiceImpl implements TransactionService{
             return deleteTransaction;
         }
     }
+
+
 }

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name="transactions")
+
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,20 +34,20 @@ public class Transaction {
     @Column(name = "currency")
     private String currency;
     @Column(name = "category")
-    @Enumerated(EnumType.STRING)
-    private Category category;
+    private int category;
 
     public Transaction() {
 
     }
 
-    public Transaction(BigDecimal amount, String targetAccount, String sendingAccount, LocalDateTime date, String description, String currency) {
+    public Transaction(BigDecimal amount, String targetAccount, String sendingAccount, LocalDateTime date, String description, String currency, int category) {
         this.amount = amount;
         this.targetAccount = targetAccount;
         this.sendingAccount = sendingAccount;
         this.date = date;
         this.description = description;
         this.currency = currency;
+        this.category = category;
     }
 
     public long getTransactionID() {
@@ -105,11 +106,11 @@ public class Transaction {
         this.currency = currency;
     }
 
-    public Category getCategory() {
+    public int getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(int category) {
         this.category = category;
     }
 }

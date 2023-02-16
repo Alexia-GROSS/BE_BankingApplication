@@ -2,6 +2,7 @@ package nl.rabobank.banking_application.service;
 
 import nl.rabobank.banking_application.model.MessageResponse;
 import nl.rabobank.banking_application.model.Transaction;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
