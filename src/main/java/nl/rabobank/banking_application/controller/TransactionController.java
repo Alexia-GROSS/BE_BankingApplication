@@ -1,5 +1,6 @@
 package nl.rabobank.banking_application.controller;
 
+import nl.rabobank.banking_application.dto.TransactionDto;
 import nl.rabobank.banking_application.model.MessageResponse;
 import nl.rabobank.banking_application.model.Transaction;
 import nl.rabobank.banking_application.repository.TransactionRepository;
@@ -32,26 +33,27 @@ public class TransactionController {
     TransactionService transactionService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<Transaction>> getAllTransaction () {
-        List<Transaction> transactions = transactionService.getAllTransaction();
-        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    public ResponseEntity<List<TransactionDto>> getAllTransaction () {
+        List<TransactionDto> transactionDto = transactionService.getAllTransaction();
+        return new ResponseEntity<>(transactionDto, HttpStatus.OK);
     }
 
     @GetMapping("/find/{transactionID}")
-    public ResponseEntity<Transaction> getTransactionById (@PathVariable("transactionID") Long transactionID) {
-        Transaction transaction = transactionService.getASingleTransaction(transactionID);
-        return new ResponseEntity<>(transaction, HttpStatus.OK);
+    public ResponseEntity<TransactionDto> getTransactionById (@PathVariable("transactionID") Long transactionID) {
+        TransactionDto transactionDto = transactionService.getASingleTransaction(transactionID);
+        return new ResponseEntity<>(transactionDto, HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<MessageResponse> addTransaction(@RequestBody Transaction transaction) {
-        MessageResponse newTransaction = transactionService.createTransaction(transaction);
+    public ResponseEntity<MessageResponse> addTransaction(@RequestBody TransactionDto transactionDto) {
+        MessageResponse newTransaction = transactionService.createTransaction(transactionDto);
         return new ResponseEntity<>(newTransaction, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{transactionID}")
-    public Optional<Transaction> updateTransaction( @PathVariable long transactionID, @RequestBody Transaction transaction) {
-         return transactionService.updateTransaction(transactionID, transaction);
+    public ResponseEntity<MessageResponse> updateTransaction( @PathVariable long transactionID, @RequestBody TransactionDto transactionDto) {
+         transactionService.updateTransaction(transactionID, transactionDto);
+         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/delete/{transactionID}")

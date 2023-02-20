@@ -1,62 +1,38 @@
-package nl.rabobank.banking_application.model;
+package nl.rabobank.banking_application.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import nl.rabobank.banking_application.model.Category;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name="transactions")
-
-public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class TransactionDto {
     private long transactionID;
-    @Column(name = "amount")
     private BigDecimal amount;
-    @Column(name = "targetaccount")
     private String targetAccount;
-    @Column(name = "sendingaccount")
     private String sendingAccount;
-    @Column(name = "date")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
-    @Column(name = "description")
     private String description;
-    @Column(name = "currency")
     private String currency;
-    @ManyToOne
-    @JoinColumn(name="category")
-    private Category category;
-
-    public Transaction() {
-
-    }
-
-    public Transaction(BigDecimal amount, String targetAccount, String sendingAccount, LocalDateTime date, String description, String currency, Category category) {
-        this.amount = amount;
-        this.targetAccount = targetAccount;
-        this.sendingAccount = sendingAccount;
-        this.date = date;
-        this.description = description;
-        this.currency = currency;
-        this.category = category;
-    }
+    private Long categoryId;
+    private String categoryType;
 
 
     public long getTransactionID() {
         return transactionID;
     }
 
-    public void setTransactionID(int transactionID) {
+    public void setTransactionID(long transactionID) {
         this.transactionID = transactionID;
     }
 
@@ -108,12 +84,19 @@ public class Transaction {
         this.currency = currency;
     }
 
-    public Category getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
+    public String getCategoryType() {
+        return categoryType;
+    }
+
+    public void setCategoryType(String categoryType) {
+        this.categoryType = categoryType;
+    }
 }
