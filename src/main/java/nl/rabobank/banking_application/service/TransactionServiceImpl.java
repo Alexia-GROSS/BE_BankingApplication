@@ -62,6 +62,20 @@ public class TransactionServiceImpl implements TransactionService{
         return transactionDto;
     }
 
+    private Transaction DtoToTransaction(TransactionDto transactionDto){
+        Transaction transaction = new Transaction();
+        transaction.setTransactionID(transactionDto.getTransactionID());
+        transaction.setAmount(transactionDto.getAmount());
+        transaction.setTargetAccount(transactionDto.getTargetAccount());
+        transaction.setSendingAccount(transactionDto.getSendingAccount());
+        transaction.setDate(transactionDto.getDate());
+        transaction.setDescription(transactionDto.getDescription());
+        transaction.setCurrency(transactionDto.getCurrency());
+        transaction.getCategory().setId(transactionDto.getCategoryId());
+        transaction.getCategory().setType(transactionDto.getCategoryType());
+        return transaction;
+    }
+
     public List<TransactionDto> getAllTransaction() {
         //List<Transaction> transactionListResult = transactionRepository.findAll();
         return transactionRepository.findAll().stream().map(transaction -> toDto(transaction)).collect(Collectors.toList());

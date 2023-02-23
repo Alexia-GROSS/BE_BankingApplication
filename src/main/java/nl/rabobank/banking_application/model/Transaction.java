@@ -56,7 +56,7 @@ public class Transaction {
         return transactionID;
     }
 
-    public void setTransactionID(int transactionID) {
+    public void setTransactionID(long transactionID) {
         this.transactionID = transactionID;
     }
 
