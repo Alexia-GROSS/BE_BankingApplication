@@ -29,25 +29,6 @@ public class TransactionServiceImpl implements TransactionService{
             "SELECT Transaction.transactionID, Transaction.amount, Transaction.targetAccount, Transaction.sendingAccount, Transaction.date, Transaction.description, Transaction.currency, Category.type FROM Category, Transaction WHERE Category.id = Transaction.category";
 */
 
-    public MessageResponse createTransaction(TransactionDto transactionDto) {
-        Transaction newTransaction = new Transaction();
-        newTransaction.setAmount(transactionDto.getAmount());
-        newTransaction.setTargetAccount(transactionDto.getTargetAccount());
-        newTransaction.setSendingAccount(transactionDto.getSendingAccount());
-        newTransaction.setDate(transactionDto.getDate());
-        newTransaction.setDescription(transactionDto.getDescription());
-        newTransaction.setCurrency(transactionDto.getCurrency());
-        Category newCategory = categoryRepository.getOne(transactionDto.getCategoryId());
-        newTransaction.setCategory(newCategory);
-        transactionRepository.save(newTransaction);
-        return new MessageResponse("New Transaction created successfully");
-    }
-
-    public TransactionDto getASingleTransaction(Long transactionID) throws ResourceNotFoundException {
-        Transaction transaction = transactionRepository.findById(transactionID).orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionID));
-        return toDto(transaction);
-    }
-
     private TransactionDto toDto(Transaction transaction){
         TransactionDto transactionDto = new TransactionDto();
         transactionDto.setTransactionID(transaction.getTransactionID());
@@ -71,36 +52,40 @@ public class TransactionServiceImpl implements TransactionService{
         transaction.setDate(transactionDto.getDate());
         transaction.setDescription(transactionDto.getDescription());
         transaction.setCurrency(transactionDto.getCurrency());
-        transaction.getCategory().setId(transactionDto.getCategoryId());
-        transaction.getCategory().setType(transactionDto.getCategoryType());
+        Category newCategory = categoryRepository.getOne(transactionDto.getCategoryId());
+        transaction.setCategory(newCategory);
+        /*transaction.getCategory().setId(transactionDto.getCategoryId());
+        transaction.getCategory().setType(transactionDto.getCategoryType());*/
         return transaction;
     }
 
-    public List<TransactionDto> getAllTransaction() {
-        //List<Transaction> transactionListResult = transactionRepository.findAll();
-        return transactionRepository.findAll().stream().map(transaction -> toDto(transaction)).collect(Collectors.toList());
-        /*System.out.println(transactionRepository);
-        return transactionRepository.findAll();*/
-        /*Query q = entityManager.createNativeQuery(QUERY_VALUES, String.class);
-        return q.getResultList();*/
+    public MessageResponse createTransaction(TransactionDto transactionDto) {
+        Transaction newTransaction = new Transaction();
+        newTransaction.setAmount(transactionDto.getAmount());
+        newTransaction.setTargetAccount(transactionDto.getTargetAccount());
+        newTransaction.setSendingAccount(transactionDto.getSendingAccount());
+        newTransaction.setDate(transactionDto.getDate());
+        newTransaction.setDescription(transactionDto.getDescription());
+        newTransaction.setCurrency(transactionDto.getCurrency());
+        Category newCategory = categoryRepository.getOne(transactionDto.getCategoryId());
+        newTransaction.setCategory(newCategory);
+        transactionRepository.save(newTransaction);
+        return new MessageResponse("New Transaction created successfully");
     }
 
-    public void updateTransaction(Long transactionID, TransactionDto transactionDto)  throws ResourceNotFoundException{
-        Optional<Transaction> updateTransaction = transactionRepository.findById(transactionID);
-        if (!updateTransaction.isPresent()){
-            throw new ResourceNotFoundException("Transaction", "id", transactionID);
-        }
-        else {
-            updateTransaction.get().setAmount(transactionDto.getAmount());
-            updateTransaction.get().setTargetAccount(transactionDto.getTargetAccount());
-            updateTransaction.get().setSendingAccount(transactionDto.getSendingAccount());
-            updateTransaction.get().setDate(transactionDto.getDate());
-            updateTransaction.get().setDescription(transactionDto.getDescription());
-            updateTransaction.get().setCurrency(transactionDto.getCurrency());
-            Category newCategory = categoryRepository.getOne(transactionDto.getCategoryId());
-            updateTransaction.get().setCategory(newCategory);
-            transactionRepository.save(updateTransaction.get());
-        }
+    public TransactionDto getASingleTransaction(Long transactionID) throws ResourceNotFoundException {
+        Transaction transaction = transactionRepository.findById(transactionID).orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionID));
+        return toDto(transaction);
+    }
+
+    public List<TransactionDto> getAllTransaction() {
+        return transactionRepository.findAll().stream().map(transaction -> toDto(transaction)).collect(Collectors.toList());
+    }
+
+    public MessageResponse updateTransaction(TransactionDto transactionDto)  throws ResourceNotFoundException{
+        Transaction transaction = transactionRepository.findById(transactionDto.getTransactionID()).orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionDto.getTransactionID()));
+        transactionRepository.save(DtoToTransaction(transactionDto));
+        return new MessageResponse("Transaction updated successfully");
     }
 
     public void deleteTransaction(Long transactionID) throws ResourceNotFoundException {

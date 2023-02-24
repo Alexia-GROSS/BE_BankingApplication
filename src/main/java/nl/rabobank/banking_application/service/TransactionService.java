@@ -14,7 +14,7 @@ public interface TransactionService {
     MessageResponse createTransaction(TransactionDto transactionDto);
     TransactionDto getASingleTransaction(Long transactionID);
     List<TransactionDto> getAllTransaction();
-    void updateTransaction(Long transactionID, TransactionDto transactionDto);
+    MessageResponse updateTransaction(TransactionDto transactionDto);
     void deleteTransaction(Long transactionID);
 
 }

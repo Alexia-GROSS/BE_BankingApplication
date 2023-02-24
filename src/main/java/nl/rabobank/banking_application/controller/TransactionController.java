@@ -50,10 +50,10 @@ public class TransactionController {
         return new ResponseEntity<>(newTransaction, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{transactionID}")
-    public ResponseEntity<MessageResponse> updateTransaction( @PathVariable long transactionID, @RequestBody TransactionDto transactionDto) {
-         transactionService.updateTransaction(transactionID, transactionDto);
-         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PutMapping("/update")
+    public ResponseEntity<MessageResponse> updateTransaction(@RequestBody TransactionDto transactionDto) {
+        MessageResponse updatedTransaction = transactionService.updateTransaction(transactionDto);
+         return new ResponseEntity<>(updatedTransaction, HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/delete/{transactionID}")
