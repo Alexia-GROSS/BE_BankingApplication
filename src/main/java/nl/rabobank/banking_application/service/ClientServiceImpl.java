@@ -1,23 +1,21 @@
 package nl.rabobank.banking_application.service;
 
 import nl.rabobank.banking_application.model.Client;
-import nl.rabobank.banking_application.model.MessageResponse;
 import nl.rabobank.banking_application.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ClientServiceImpl implements ClientService{
+public class ClientServiceImpl implements  ClientService {
+
+    @Autowired
+    ClientRepository clientRepository;
 
     @Override
-    public MessageResponse createClient(Client client) {
-        return null;
-    }
-
-    @Override
-    public List<Client> getAllClients() {
-        return null;
+    public List<Client> getAllClient() {
+        return clientRepository.findAll();
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigInteger;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,8 +34,9 @@ public class TransactionController {
     TransactionService transactionService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<TransactionDto>> getAllTransaction () {
-        List<TransactionDto> transactionDto = transactionService.getAllTransaction();
+    public ResponseEntity<List<TransactionDto>> getAllTransaction (Principal principal) {
+        String username = principal.getName();
+        List<TransactionDto> transactionDto = transactionService.getAllTransactionByUsername(username);
         return new ResponseEntity<>(transactionDto, HttpStatus.OK);
     }
 

@@ -4,6 +4,7 @@ import nl.rabobank.banking_application.model.Category;
 import nl.rabobank.banking_application.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -26,8 +27,8 @@ public class JdbcTransactionRepository implements TransactionRepository {
 
     @Override
     public Optional<Transaction> findById(Long transactionID) {
-        Transaction transactionById = jdbcTemplate.queryForObject("SELECT * FROM transactions WHERE transactionid=?",
-                new Object[]{transactionID}, Transaction.class);
+        Transaction transactionById = jdbcTemplate.queryForObject("SELECT * FROM transactions, categories WHERE transactionid=? AND transactions.category = categories.id",
+                new Object[]{transactionID}, new TransactionMapper());
         assert transactionById != null;
         return Optional.of(
                 transactionById
@@ -36,7 +37,14 @@ public class JdbcTransactionRepository implements TransactionRepository {
 
     @Override
     public List<Transaction> findAll() {
-        return jdbcTemplate.query("SELECT * from transactions", new TransactionMapper());
+        return jdbcTemplate.query("SELECT * from transactions, categories\n" +
+                " WHERE transactions.category = categories.id ORDER BY transactions.transactionid ASC", new TransactionMapper());
+    }
+
+    @Override
+    public List<Transaction> findAllByUsername(String username) {
+        return jdbcTemplate.query("SELECT * from transactions, categories\n" +
+                " WHERE transactions.category = categories.id ORDER BY transactions.transactionid ASC", new TransactionMapper());
     }
 
     @Override
@@ -48,12 +56,10 @@ public class JdbcTransactionRepository implements TransactionRepository {
 
 
 class TransactionMapper implements RowMapper<Transaction> {
-    @Autowired
-    JdbcCategoryRepository categoryRepository;
-
     @Override
     public Transaction mapRow(ResultSet rs, int rowNum) throws SQLException {
         Transaction transaction = new Transaction();
+        Category category = new Category();
 
         transaction.setTransactionID(rs.getLong("transactionid"));
         transaction.setTargetAccount(rs.getString("targetaccount"));
@@ -61,9 +67,11 @@ class TransactionMapper implements RowMapper<Transaction> {
         transaction.setAmount(rs.getBigDecimal("amount"));
         transaction.setDate(rs.getTimestamp("date").toLocalDateTime());
         transaction.setCurrency(rs.getString("currency"));
-        /*transaction.getCategory().setId(rs.getLong("category"));*/
-        Category newCategory = categoryRepository.getOne(rs.getLong("category"));
-        transaction.setCategory(newCategory);
+        transaction.setDescription(rs.getString("description"));
+        category.setId(rs.getLong("id"));
+        category.setType(rs.getString("type"));
+        transaction.setCategory(category);
         return transaction;
     }
+
 }

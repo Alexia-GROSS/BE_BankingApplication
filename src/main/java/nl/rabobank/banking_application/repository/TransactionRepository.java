@@ -11,4 +11,6 @@ public interface TransactionRepository  {
     List<Transaction> findAll();
 
     void deleteById(Long transactionID);
+
+    List<Transaction> findAllByUsername(String username);
 }

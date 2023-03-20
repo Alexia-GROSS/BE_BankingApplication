@@ -25,4 +25,5 @@ public class CategoryController {
         List<Category> categories = categoryService.getAllCategory();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
+
 }

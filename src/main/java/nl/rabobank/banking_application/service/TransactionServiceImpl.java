@@ -49,23 +49,15 @@ public class TransactionServiceImpl implements TransactionService{
         transaction.setDate(transactionDto.getDate());
         transaction.setDescription(transactionDto.getDescription());
         transaction.setCurrency(transactionDto.getCurrency());
+        System.out.println(transactionDto.getCategoryId());
         Category newCategory = categoryRepository.getOne(transactionDto.getCategoryId());
+        System.out.println(newCategory);
         transaction.setCategory(newCategory);
-        /*transaction.getCategory().setId(transactionDto.getCategoryId());
-        transaction.getCategory().setType(transactionDto.getCategoryType());*/
         return transaction;
     }
 
     public MessageResponse createTransaction(TransactionDto transactionDto) {
-        Transaction newTransaction = new Transaction();
-        newTransaction.setAmount(transactionDto.getAmount());
-        newTransaction.setTargetAccount(transactionDto.getTargetAccount());
-        newTransaction.setSendingAccount(transactionDto.getSendingAccount());
-        newTransaction.setDate(transactionDto.getDate());
-        newTransaction.setDescription(transactionDto.getDescription());
-        newTransaction.setCurrency(transactionDto.getCurrency());
-        Category newCategory = categoryRepository.getOne(transactionDto.getCategoryId());
-        newTransaction.setCategory(newCategory);
+        Transaction newTransaction = DtoToTransaction(transactionDto);
         transactionRepository.save(newTransaction);
         return new MessageResponse("New Transaction created successfully");
     }
@@ -79,9 +71,14 @@ public class TransactionServiceImpl implements TransactionService{
         return transactionRepository.findAll().stream().map(transaction -> toDto(transaction)).collect(Collectors.toList());
     }
 
+    public List<TransactionDto> getAllTransactionByUsername(String username) {
+        return transactionRepository.findAllByUsername(username).stream().map(transaction -> toDto(transaction)).collect(Collectors.toList());
+    }
+
     public MessageResponse updateTransaction(TransactionDto transactionDto)  throws ResourceNotFoundException{
         Transaction transaction = transactionRepository.findById(transactionDto.getTransactionID()).orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionDto.getTransactionID()));
         transactionRepository.save(DtoToTransaction(transactionDto));
+        deleteTransaction(transactionDto.getTransactionID());
         return new MessageResponse("Transaction updated successfully");
     }
 
@@ -94,6 +91,4 @@ public class TransactionServiceImpl implements TransactionService{
             transactionRepository.deleteById(transactionID);
         }
     }
-
-
 }
