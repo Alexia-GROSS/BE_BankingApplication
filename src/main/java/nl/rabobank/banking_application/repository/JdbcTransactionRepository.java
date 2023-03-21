@@ -43,8 +43,11 @@ public class JdbcTransactionRepository implements TransactionRepository {
 
     @Override
     public List<Transaction> findAllByUsername(String username) {
-        return jdbcTemplate.query("SELECT * from transactions, categories\n" +
-                " WHERE transactions.category = categories.id ORDER BY transactions.transactionid ASC", new TransactionMapper());
+        String sql = "SELECT * from clients, transactions, categories, accounts" +
+                " WHERE clients.username=? AND clients.clientid = accounts.ownerid" +
+                " AND (accounts.iban = transactions.targetaccount OR accounts.iban = transactions.sendingaccount)" +
+                " AND transactions.category = categories.id ORDER BY transactions.transactionid ASC";
+        return jdbcTemplate.query(sql, new Object[]{username}, new TransactionMapper());
     }
 
     @Override
