@@ -1,4 +1,4 @@
-package nl.rabobank.banking_application.service;
+package nl.rabobank.banking_application.model;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,11 +6,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import nl.rabobank.banking_application.model.Client;
-import nl.rabobank.banking_application.model.Role;
+import nl.rabobank.banking_application.repository.RoleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 
 public class ClientPrinciple implements UserDetails {
     private static final long serialVersionUID = 1L;
@@ -28,6 +29,9 @@ public class ClientPrinciple implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     public ClientPrinciple(Long id, String name,
                          String username, String email, String password,
                          Collection<? extends GrantedAuthority> authorities) {
@@ -41,7 +45,7 @@ public class ClientPrinciple implements UserDetails {
 
     public static ClientPrinciple build(Client client) {
         List<GrantedAuthority> authorities = client.getRoles().stream().map(role ->
-                new SimpleGrantedAuthority(role.getRolename().name())
+                new SimpleGrantedAuthority(role.getRolename().toString())
         ).collect(Collectors.toList());
 
         return new ClientPrinciple(
@@ -78,7 +82,7 @@ public class ClientPrinciple implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override

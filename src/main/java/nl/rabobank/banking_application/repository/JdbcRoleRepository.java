@@ -32,6 +32,15 @@ public class JdbcRoleRepository implements RoleRepository{
         jdbcTemplate.update("INSERT INTO user_roles (user_id, role_id) VALUES(?,?)",
                 clientID, role.getRoleid());
     }
+
+    @Override
+    public Role getClientRoles(String username) {
+        String sql = "SELECT roles.roleid, roles.name from clients, user_roles, roles WHERE clients.username=? AND user_roles.user_id = clients.clientid AND user_roles.role_id = roles.roleid";
+        Role clientRoles = jdbcTemplate.queryForObject(sql, new Object[]{username}, new RoleMapper());
+        System.out.println(clientRoles);
+        assert clientRoles != null;
+        return clientRoles;
+    }
 }
 
 class RoleMapper implements RowMapper<Role> {

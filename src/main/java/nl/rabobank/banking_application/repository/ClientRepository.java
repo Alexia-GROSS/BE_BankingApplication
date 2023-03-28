@@ -7,6 +7,7 @@ import java.util.Optional;
 public interface ClientRepository {
     Optional<Client> findByUsername(String username);
     Boolean existsByUsername(String username);
+    Optional<Client> findByUsernameWithRoleName(String username);
     Boolean existsByEmail(String email);
 
     void save(Client user);

@@ -10,10 +10,8 @@ import java.util.List;
 
 @Service
 public class ClientServiceImpl implements  ClientService {
-
     @Autowired
     ClientRepository clientRepository;
-
     @Override
     public List<Client> getAllClient() {
         return clientRepository.findAll();

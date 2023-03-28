@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface RoleRepository {
     Optional<Role> findByName(RoleName roleName);
-
     void save(long clientID, Role role);
+    Role getClientRoles(String username);
 }

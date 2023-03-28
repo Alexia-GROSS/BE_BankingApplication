@@ -32,10 +32,20 @@ public class JdbcClientRepository implements ClientRepository{
     }
 
     @Override
+    public Optional<Client> findByUsernameWithRoleName(String username) {
+        Client clientByUsername = jdbcTemplate.queryForObject("SELECT clientid, clients.name, username, email, password, roles.name from clients, user_roles, roles WHERE clients.username=? AND user_roles.user_id = clients.clientid AND user_roles.role_id = roles.roleid",
+                new Object[]{username}, new ClientMapper());
+        assert clientByUsername != null;
+        return Optional.of(
+                clientByUsername
+        );
+    }
+
+    @Override
     public Boolean existsByUsername(String username) {
         try {
             Client clientByUsername = jdbcTemplate.queryForObject("SELECT * FROM clients WHERE clients.username=?",
-                    new Object[]{username}, new ClientMapper());
+                    new Object[]{username}, Client.class);
             return true;
         } catch (EmptyResultDataAccessException e) {
             return false;
@@ -81,6 +91,32 @@ class ClientMapper implements RowMapper<Client> {
         client.setUsername(rs.getString("username"));
         client.setEmail(rs.getString("email"));
         client.setPassword(rs.getString("password"));
+
+        return client;
+    }
+}
+
+class ClientMapperRole implements RowMapper<Client> {
+    @Override
+    public Client mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Client client = new Client();
+        Role role = new Role();
+
+        client.setClientID(rs.getInt("clientid"));
+        client.setName(rs.getString("name"));
+        client.setUsername(rs.getString("username"));
+        client.setEmail(rs.getString("email"));
+        client.setPassword(rs.getString("password"));
+        role.setRoleid(rs.getLong("roleid"));
+        if (rs.getString("name") == "ROLE_USER"){
+            role.setRolename(RoleName.ROLE_USER);
+        } else if (rs.getString("name") == "ROLE_PM") {
+            role.setRolename(RoleName.ROLE_PM);
+        } else{
+            role.setRolename(RoleName.ROLE_ADMIN);
+        }
+        System.out.println(role.getRolename());
+        client.setRoles((Set<Role>) role);
 
         return client;
     }

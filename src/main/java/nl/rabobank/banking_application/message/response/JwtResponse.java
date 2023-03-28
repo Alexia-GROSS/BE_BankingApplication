@@ -3,6 +3,7 @@ package nl.rabobank.banking_application.message.response;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.List;
 
 public class JwtResponse {
     private String token;
