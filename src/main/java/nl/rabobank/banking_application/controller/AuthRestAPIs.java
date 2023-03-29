@@ -52,15 +52,10 @@ public class AuthRestAPIs {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginForm loginRequest) {
-        //System.out.println(loginRequest.getUsername());
-        //System.out.println(loginRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        //System.out.println("TEST");
-        //System.out.println(authentication.getAuthorities());
 
         String jwt = jwtProvider.generateJwtToken(authentication);
 

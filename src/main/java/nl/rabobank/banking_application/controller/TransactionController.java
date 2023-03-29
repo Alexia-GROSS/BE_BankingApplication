@@ -36,6 +36,7 @@ public class TransactionController {
     @GetMapping("/all")
     public ResponseEntity<List<TransactionDto>> getAllTransaction (Principal principal) {
         String username = principal.getName();
+        System.out.println(principal);
         List<TransactionDto> transactionDto = transactionService.getAllTransactionByUsername(username);
         return new ResponseEntity<>(transactionDto, HttpStatus.OK);
     }
