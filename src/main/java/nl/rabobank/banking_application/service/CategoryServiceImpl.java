@@ -20,7 +20,7 @@ public class CategoryServiceImpl implements CategoryService{
         return categoryRepository.findAll();
     }
 
-    public Category getASingleCategory(Long categoryID)throws ResourceNotFoundException {
+    public Category getASingleCategory(Long categoryID) throws ResourceNotFoundException {
         Category category = categoryRepository.findById(categoryID);
         return  category;
     }

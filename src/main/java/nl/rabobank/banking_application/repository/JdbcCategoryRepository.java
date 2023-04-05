@@ -43,6 +43,14 @@ public class JdbcCategoryRepository implements CategoryRepository {
        assert  categoryById != null;
        return categoryById;
     }
+
+    @Override
+    public Category createCategoryByType(String categoryType) {
+        Category category = jdbcTemplate.queryForObject("SELECT * FROM categories WHERE type=?",
+                new Object[]{categoryType}, new CategoryMapper());
+        assert  category != null;
+        return category;
+    }
 }
 
 class CategoryMapper implements RowMapper<Category> {
@@ -52,6 +60,7 @@ class CategoryMapper implements RowMapper<Category> {
 
         category.setId(rs.getLong("id"));
         category.setType(rs.getString("type"));
+        category.setGeneralCategoryId(rs.getLong("generalcategoryid"));
 
         return category;
     }

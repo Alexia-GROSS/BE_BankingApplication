@@ -9,8 +9,8 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository {
     List<Category> findAll();
-
     Category getOne(Long categoryId);
-
     Category findById(Long categoryID);
+
+    Category createCategoryByType(String categoryType);
 }

@@ -15,14 +15,17 @@ public class Category{
     private long id;
     @Column(name = "type")
     private String type;
+    @Column(name = "generalcategoryid")
+    private long generalCategoryId;
 
     public Category() {
 
     }
 
-    public Category(long id, String type) {
+    public Category(long id, String type, long generalCategoryId) {
         this.id = id;
         this.type = type;
+        this.generalCategoryId = generalCategoryId;
     }
 
     public long getId() {
@@ -39,5 +42,13 @@ public class Category{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public long getGeneralCategoryId() {
+        return generalCategoryId;
+    }
+
+    public void setGeneralCategoryId(long generalCategoryId) {
+        this.generalCategoryId = generalCategoryId;
     }
 }

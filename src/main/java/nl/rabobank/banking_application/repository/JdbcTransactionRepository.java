@@ -51,6 +51,12 @@ public class JdbcTransactionRepository implements TransactionRepository {
     }
 
     @Override
+    public List<Transaction> findTransactionsByCategory(Long categoryId) {
+        String sql = "SELECT * FROM transactions, categories WHERE transactions.category=? AND transactions.category = categories.id";
+        return jdbcTemplate.query(sql, new Object[]{categoryId}, new TransactionMapper());
+    }
+
+    @Override
     public void deleteById(Long transactionID) {
         jdbcTemplate.update("DELETE FROM transactions WHERE transactionid=?", transactionID);
     }
@@ -73,6 +79,7 @@ class TransactionMapper implements RowMapper<Transaction> {
         transaction.setDescription(rs.getString("description"));
         category.setId(rs.getLong("id"));
         category.setType(rs.getString("type"));
+        category.setGeneralCategoryId(rs.getLong("generalcategoryid"));
         transaction.setCategory(category);
         return transaction;
     }
