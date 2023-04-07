@@ -60,10 +60,12 @@ public class FootprintServiceImpl implements FootprintService{
 
         allCategories.forEach(category -> {
             singleFootprint[i]= new Footprint();
-            singleFootprint[i].setGeneralCategory(category.getType());
-            singleFootprint[i].setFootPrint(getFootprintPerCategory(category.getType()));
-            listFootprint.add(singleFootprint[i]);
-                }
+            if(getFootprintPerCategory(category.getType()).intValue() != 0){
+                singleFootprint[i].setGeneralCategory(category.getType());
+                singleFootprint[i].setFootPrint(getFootprintPerCategory(category.getType()));
+                listFootprint.add(singleFootprint[i]);
+            }
+        }
         );
         return listFootprint;
     }
