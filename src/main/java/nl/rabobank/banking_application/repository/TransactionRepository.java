@@ -17,4 +17,10 @@ public interface TransactionRepository  {
     List<Transaction> findAllByUsername(String username);
 
     List<Transaction> findTransactionsByCategory(Long categoryId);
+
+    List<Transaction> findTransactionsByCategoryAndMonth(long id, int month);
+
+    int calculateSumOfMoneyOfAllTransactions(String username);
+
+    int retrieveMoneyInAccount(String username);
 }

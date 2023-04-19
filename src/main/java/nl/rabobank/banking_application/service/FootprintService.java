@@ -12,7 +12,9 @@ import java.util.List;
 public interface FootprintService {
 
     public BigDecimal getFootprintPerCategory(String categoryType);
-    public BigDecimal getFootPrintPerMonth(Date date);
 
-    public List<Footprint> getFootPrintForAllCategories();
+    public List<Footprint> getFootPrintForAllCategoriesForAllMonth();
+
+    List<Footprint> getFootprintForAllCategoriesSortedPerMonth(int month);
+
 }

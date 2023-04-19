@@ -1,5 +1,6 @@
 package nl.rabobank.banking_application.controller;
 
+import nl.rabobank.banking_application.dto.TransactionDto;
 import nl.rabobank.banking_application.model.Category;
 import nl.rabobank.banking_application.model.Footprint;
 import nl.rabobank.banking_application.service.FootprintService;
@@ -27,9 +28,14 @@ public class FootprintController {
 
     @GetMapping("/allfootprint")
     public ResponseEntity<List<Footprint>> getAllCategoriesFootprint(){
-        List<Footprint> footPrintForAllCategory = footprintService.getFootPrintForAllCategories();
+        List<Footprint> footPrintForAllCategory = footprintService.getFootPrintForAllCategoriesForAllMonth();
         return new ResponseEntity<>(footPrintForAllCategory, HttpStatus.OK);
     }
 
+    @GetMapping("/perdate/{date}")
+    public ResponseEntity<List<Footprint>> getFootprintForAllCategoriesSortedPerMonth(@PathVariable("date") int month ){
+        List<Footprint> footPrintPerMonth = footprintService.getFootprintForAllCategoriesSortedPerMonth(month);
+        return new ResponseEntity<>(footPrintPerMonth, HttpStatus.OK);
+    }
 
 }

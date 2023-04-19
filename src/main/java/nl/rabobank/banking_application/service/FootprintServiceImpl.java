@@ -33,7 +33,19 @@ public class FootprintServiceImpl implements FootprintService{
         BigDecimal carbonMultiplier = footprintRepository.findCarbonMultiplierForCategory(category.getId());
         List<Transaction> transactionSameCategory = transactionRepository.findTransactionsByCategory(category.getId());
         transactionSameCategory.forEach((transaction) -> {
-            footPrintValue = footPrintValue + transaction.getAmount().intValue();
+            footPrintValue = footPrintValue + (transaction.getAmount().intValue()*carbonMultiplier.intValue());
+        });
+        BigDecimal bigDecimal = BigDecimal.valueOf(footPrintValue);
+        footPrintValue=0;
+        return bigDecimal;
+    }
+
+    public BigDecimal getFootprintPerCategoryPerMonth(String categoryType, int month){
+        Category category = categoryRepository.createCategoryByType(categoryType);
+        BigDecimal carbonMultiplier = footprintRepository.findCarbonMultiplierForCategory(category.getId());
+        List<Transaction> transactionSameCategorySameMonth = transactionRepository.findTransactionsByCategoryAndMonth(category.getId(), month);
+        transactionSameCategorySameMonth.forEach((transaction) -> {
+            footPrintValue = footPrintValue + (transaction.getAmount().intValue()*carbonMultiplier.intValue());
         });
         BigDecimal bigDecimal = BigDecimal.valueOf(footPrintValue);
         footPrintValue=0;
@@ -41,19 +53,8 @@ public class FootprintServiceImpl implements FootprintService{
     }
 
     @Override
-    public BigDecimal getFootPrintPerMonth(Date date) {
-        return null;
-    }
-
-    /*@Override
-    public List<Footprint> getFootPrintForAllCategories() {
-        return null;
-    }*/
-
-    @Override
-    public List<Footprint> getFootPrintForAllCategories() {
+    public List<Footprint> getFootPrintForAllCategoriesForAllMonth() {
         int i =0;
-        ;
         List<Footprint> listFootprint = new ArrayList<Footprint>();
         List<Category> allCategories = categoryRepository.findAll();
         Footprint[] singleFootprint = new Footprint[allCategories.size()];
@@ -66,6 +67,25 @@ public class FootprintServiceImpl implements FootprintService{
                 listFootprint.add(singleFootprint[i]);
             }
         }
+        );
+        return listFootprint;
+    }
+
+    @Override
+    public List<Footprint> getFootprintForAllCategoriesSortedPerMonth(int month) {
+        int i =0;
+        List<Footprint> listFootprint = new ArrayList<Footprint>();
+        List<Category> allCategories = categoryRepository.findAll();
+        Footprint[] singleFootprint = new Footprint[allCategories.size()];
+
+        allCategories.forEach(category -> {
+                    singleFootprint[i]= new Footprint();
+                    if(getFootprintPerCategoryPerMonth(category.getType(), month).intValue() != 0){
+                        singleFootprint[i].setGeneralCategory(category.getType());
+                        singleFootprint[i].setFootPrint(getFootprintPerCategoryPerMonth(category.getType(), month));
+                        listFootprint.add(singleFootprint[i]);
+                    }
+                }
         );
         return listFootprint;
     }

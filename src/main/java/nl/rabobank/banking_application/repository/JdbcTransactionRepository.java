@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -38,7 +39,7 @@ public class JdbcTransactionRepository implements TransactionRepository {
     @Override
     public List<Transaction> findAll() {
         return jdbcTemplate.query("SELECT * from transactions, categories\n" +
-                " WHERE transactions.category = categories.id ORDER BY transactions.transactionid ASC", new TransactionMapper());
+                " WHERE transactions.category = categories.id ORDER BY transactions.date ASC", new TransactionMapper());
     }
 
     @Override
@@ -46,7 +47,7 @@ public class JdbcTransactionRepository implements TransactionRepository {
         String sql = "SELECT * from clients, transactions, categories, accounts" +
                 " WHERE clients.username=? AND clients.clientid = accounts.ownerid" +
                 " AND (accounts.iban = transactions.targetaccount OR accounts.iban = transactions.sendingaccount)" +
-                " AND transactions.category = categories.id ORDER BY transactions.transactionid ASC";
+                " AND transactions.category = categories.id ORDER BY transactions.date ASC";
         return jdbcTemplate.query(sql, new Object[]{username}, new TransactionMapper());
     }
 
@@ -54,6 +55,24 @@ public class JdbcTransactionRepository implements TransactionRepository {
     public List<Transaction> findTransactionsByCategory(Long categoryId) {
         String sql = "SELECT * FROM transactions, categories WHERE transactions.category=? AND transactions.category = categories.id";
         return jdbcTemplate.query(sql, new Object[]{categoryId}, new TransactionMapper());
+    }
+
+    @Override
+    public List<Transaction> findTransactionsByCategoryAndMonth(long categoryId, int month) {
+        String sql = "SELECT * FROM transactions, categories WHERE transactions.category=? AND transactions.category = categories.id AND extract(month from transactions.date) = ?";
+        return jdbcTemplate.query(sql, new Object[]{categoryId, month}, new TransactionMapper());
+    }
+
+    @Override
+    public int calculateSumOfMoneyOfAllTransactions(String username) {
+        String sql = "SELECT SUM(transactions.amount) FROM transactions, clients, accounts WHERE clients.username=? AND clients.clientid = accounts.ownerid AND (accounts.iban = transactions.targetaccount OR accounts.iban = transactions.sendingaccount)";
+        return jdbcTemplate.queryForObject(sql, new Object[]{username}, Integer.class);
+    }
+
+    @Override
+    public int retrieveMoneyInAccount(String username) {
+        String sql="SELECT accounts.balance FROM clients, accounts WHERE clients.username=? AND clients.clientid = accounts.ownerid";
+        return jdbcTemplate.queryForObject(sql, new Object[]{username}, Integer.class);
     }
 
     @Override
